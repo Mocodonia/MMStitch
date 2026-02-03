@@ -19,6 +19,14 @@ class MMStitcher {
             input.addEventListener('change', (e) => this.handleImageUpload(e));
         });
 
+        // Make thumbnails clickable to re-upload
+        document.querySelectorAll('.preview-thumb').forEach(thumb => {
+            thumb.addEventListener('click', (e) => {
+                const position = e.target.id.replace('thumb-', '');
+                document.getElementById(`img-${position}`).click();
+            });
+        });
+
         // Button handlers
         document.getElementById('stitch-btn').addEventListener('click', () => this.stitch());
         document.getElementById('download-btn').addEventListener('click', () => this.download());
@@ -46,27 +54,40 @@ class MMStitcher {
         const file = event.target.files[0];
         const position = event.target.id.replace('img-', '');
         
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    this.images[position] = img;
-                    this.showThumbnail(position, e.target.result);
-                    this.updateUI();
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+        
+        // Validate it's an image
+        if (!file.type.startsWith('image/')) {
+            alert('Please upload an image file');
+            return;
         }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                this.images[position] = img;
+                this.showThumbnail(position, e.target.result);
+                this.updateUI();
+                console.log(`Loaded image for ${position}: ${img.width}x${img.height}`);
+            };
+            img.onerror = () => {
+                alert('Failed to load image');
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 
     showThumbnail(position, src) {
         const thumb = document.getElementById(`thumb-${position}`);
         const slot = thumb.parentElement;
         
-        thumb.style.backgroundImage = `url(${src})`;
-        slot.classList.add('uploaded');
+        if (thumb && slot) {
+            thumb.style.backgroundImage = `url(${src})`;
+            thumb.style.display = 'block';
+            slot.classList.add('uploaded');
+        }
     }
 
     updateUI() {
@@ -93,6 +114,11 @@ class MMStitcher {
             slot.classList.remove('uploaded');
         });
         
+        document.querySelectorAll('.preview-thumb').forEach(thumb => {
+            thumb.style.backgroundImage = '';
+            thumb.style.display = 'none';
+        });
+        
         document.querySelectorAll('input[type="file"]').forEach(input => {
             input.value = '';
         });
@@ -117,8 +143,12 @@ class MMStitcher {
             this.canvas.width = this.outputWidth;
             this.canvas.height = this.outputHeight;
             
+            console.log(`Starting stitch at ${this.outputWidth}x${this.outputHeight}`);
+            
             // Perform the conversion
             await this.convertCubemapToEquirectangular();
+            
+            console.log('Stitching complete!');
             
             // Enable download button
             document.getElementById('download-btn').disabled = false;
