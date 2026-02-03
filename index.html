@@ -8,56 +8,156 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌐 MMStitch</h1>
-        <p>Create 360° images</p>
-        
+        <header>
+            <h1>🌐 MMStitch</h1>
+            <p>Create 360° panoramic images for MMView</p>
+        </header>
+
         <div class="upload-section">
             <h2>Upload Images</h2>
+            <p class="hint">Upload 6-8 images to create your 360° panorama. First 6 are required for cubemap faces.</p>
+            
             <div class="image-grid">
                 <div class="upload-slot" data-position="front">
                     <input type="file" accept="image/*" id="img-front">
-                    <label for="img-front">Front</label>
+                    <label for="img-front">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Front</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-front"></div>
                 </div>
+
                 <div class="upload-slot" data-position="back">
                     <input type="file" accept="image/*" id="img-back">
-                    <label for="img-back">Back</label>
+                    <label for="img-back">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Back</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-back"></div>
                 </div>
+
                 <div class="upload-slot" data-position="left">
                     <input type="file" accept="image/*" id="img-left">
-                    <label for="img-left">Left</label>
+                    <label for="img-left">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Left</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-left"></div>
                 </div>
+
                 <div class="upload-slot" data-position="right">
                     <input type="file" accept="image/*" id="img-right">
-                    <label for="img-right">Right</label>
+                    <label for="img-right">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Right</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-right"></div>
                 </div>
+
                 <div class="upload-slot" data-position="top">
                     <input type="file" accept="image/*" id="img-top">
-                    <label for="img-top">Top</label>
+                    <label for="img-top">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Top</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-top"></div>
                 </div>
+
                 <div class="upload-slot" data-position="bottom">
                     <input type="file" accept="image/*" id="img-bottom">
-                    <label for="img-bottom">Bottom</label>
+                    <label for="img-bottom">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Bottom</span>
+                        <span class="status">Required</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-bottom"></div>
                 </div>
+
                 <div class="upload-slot" data-position="extra1">
                     <input type="file" accept="image/*" id="img-extra1">
-                    <label for="img-extra1">Extra 1</label>
+                    <label for="img-extra1">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Extra 1</span>
+                        <span class="status">Optional</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-extra1"></div>
                 </div>
+
                 <div class="upload-slot" data-position="extra2">
                     <input type="file" accept="image/*" id="img-extra2">
-                    <label for="img-extra2">Extra 2</label>
+                    <label for="img-extra2">
+                        <span class="upload-icon">📷</span>
+                        <span class="upload-text">Extra 2</span>
+                        <span class="status">Optional</span>
+                    </label>
+                    <div class="preview-thumb" id="thumb-extra2"></div>
                 </div>
             </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="upload-progress"></div>
+            </div>
+            <p class="upload-status" id="upload-status">0/6 required images uploaded</p>
         </div>
 
         <div class="controls">
-            <button id="stitch-btn" disabled>Stitch Images</button>
-            <button id="download-btn" disabled>Download 360° Image</button>
+            <button id="stitch-btn" class="btn btn-primary" disabled>
+                <span class="btn-icon">🔄</span>
+                Stitch Images
+            </button>
+            <button id="download-btn" class="btn btn-success" disabled>
+                <span class="btn-icon">💾</span>
+                Download 360° Image
+            </button>
+            <button id="clear-btn" class="btn btn-secondary">
+                <span class="btn-icon">🗑️</span>
+                Clear All
+            </button>
+        </div>
+
+        <div class="settings">
+            <h3>Settings</h3>
+            <div class="setting-group">
+                <label for="output-width">Output Width:</label>
+                <select id="output-width">
+                    <option value="2048">2048px (Standard)</option>
+                    <option value="4096" selected>4096px (High Quality)</option>
+                    <option value="8192">8192px (Ultra Quality)</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="output-format">Output Format:</label>
+                <select id="output-format">
+                    <option value="png">PNG (Lossless)</option>
+                    <option value="jpeg" selected>JPEG (Smaller file)</option>
+                </select>
+            </div>
+            <div class="setting-group" id="quality-group">
+                <label for="jpeg-quality">JPEG Quality:</label>
+                <input type="range" id="jpeg-quality" min="50" max="100" value="92">
+                <span id="quality-value">92%</span>
+            </div>
         </div>
 
         <div class="preview-section">
             <h2>Preview</h2>
-            <canvas id="preview-canvas"></canvas>
+            <div class="canvas-container">
+                <canvas id="preview-canvas"></canvas>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Stitching images...</p>
+                </div>
+            </div>
         </div>
+
+        <footer>
+            <p>Made for MMView • <a href="https://github.com/Mocodonia/MMStitch" target="_blank">GitHub</a></p>
+        </footer>
     </div>
 
     <script src="js/stitcher.js"></script>
