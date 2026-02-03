@@ -60,5 +60,3 @@ GPL-3.0 License
 This tool creates panoramic images specifically formatted for use in MMView's Google Street View-style interface.
 
 ---
-
-Made with ❤️ for Mocodonia
