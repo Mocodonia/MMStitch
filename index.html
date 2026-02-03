@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMStitch - 360° Image Creator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 MMStitch</h1>
+        <p>Create 360° images</p>
+        
+        <div class="upload-section">
+            <h2>Upload Images</h2>
+            <div class="image-grid">
+                <div class="upload-slot" data-position="front">
+                    <input type="file" accept="image/*" id="img-front">
+                    <label for="img-front">Front</label>
+                </div>
+                <div class="upload-slot" data-position="back">
+                    <input type="file" accept="image/*" id="img-back">
+                    <label for="img-back">Back</label>
+                </div>
+                <div class="upload-slot" data-position="left">
+                    <input type="file" accept="image/*" id="img-left">
+                    <label for="img-left">Left</label>
+                </div>
+                <div class="upload-slot" data-position="right">
+                    <input type="file" accept="image/*" id="img-right">
+                    <label for="img-right">Right</label>
+                </div>
+                <div class="upload-slot" data-position="top">
+                    <input type="file" accept="image/*" id="img-top">
+                    <label for="img-top">Top</label>
+                </div>
+                <div class="upload-slot" data-position="bottom">
+                    <input type="file" accept="image/*" id="img-bottom">
+                    <label for="img-bottom">Bottom</label>
+                </div>
+                <div class="upload-slot" data-position="extra1">
+                    <input type="file" accept="image/*" id="img-extra1">
+                    <label for="img-extra1">Extra 1</label>
+                </div>
+                <div class="upload-slot" data-position="extra2">
+                    <input type="file" accept="image/*" id="img-extra2">
+                    <label for="img-extra2">Extra 2</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="stitch-btn" disabled>Stitch Images</button>
+            <button id="download-btn" disabled>Download 360° Image</button>
+        </div>
+
+        <div class="preview-section">
+            <h2>Preview</h2>
+            <canvas id="preview-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="js/stitcher.js"></script>
+</body>
+</html>
