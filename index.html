@@ -3,169 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMStitch Upload Test</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .status {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 18px;
-        }
-        .upload-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .upload-box {
-            background: white;
-            border: 3px dashed #ddd;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .upload-box:hover {
-            border-color: #2563eb;
-            background: #f0f9ff;
-        }
-        .upload-box.uploaded {
-            border-color: #10b981;
-            background: #f0fdf4;
-        }
-        .upload-box input {
-            display: none;
-        }
-        .upload-box label {
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-        }
-        .preview-img {
-            max-width: 100%;
-            max-height: 150px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
-        .icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-        @media (max-width: 768px) {
-            .upload-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <title>MMStitch - 360° Image Creator</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>🌐 MMStitch - Upload Test</h1>
-    <p class="status" id="status">Click any box to upload an image</p>
-    
-    <div class="upload-grid">
-        <div class="upload-box" id="box-front">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-front" accept="image/*">
-            <label for="upload-front">Front</label>
-            <div id="preview-front"></div>
+    <div class="container">
+        <header>
+            <h1>🌐 MMStitch</h1>
+            <p>Create 360° panoramic images for MMView</p>
+        </header>
+
+        <div class="status-bar">
+            <h2>Upload Images</h2>
+            <p class="upload-status" id="status">0/6 required images uploaded</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
         </div>
-        
-        <div class="upload-box" id="box-back">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-back" accept="image/*">
-            <label for="upload-back">Back</label>
-            <div id="preview-back"></div>
+
+        <div class="upload-grid">
+            <!-- Front -->
+            <div class="upload-slot" data-face="front">
+                <input type="file" id="file-front" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Front</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-front"></div>
+            </div>
+
+            <!-- Back -->
+            <div class="upload-slot" data-face="back">
+                <input type="file" id="file-back" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Back</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-back"></div>
+            </div>
+
+            <!-- Left -->
+            <div class="upload-slot" data-face="left">
+                <input type="file" id="file-left" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Left</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-left"></div>
+            </div>
+
+            <!-- Right -->
+            <div class="upload-slot" data-face="right">
+                <input type="file" id="file-right" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Right</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-right"></div>
+            </div>
+
+            <!-- Top -->
+            <div class="upload-slot" data-face="top">
+                <input type="file" id="file-top" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Top</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-top"></div>
+            </div>
+
+            <!-- Bottom -->
+            <div class="upload-slot" data-face="bottom">
+                <input type="file" id="file-bottom" accept="image/*" style="display: none;">
+                <div class="upload-content">
+                    <div class="icon">📷</div>
+                    <div class="label">Bottom</div>
+                    <div class="hint">Click to upload</div>
+                </div>
+                <div class="preview" id="preview-bottom"></div>
+            </div>
         </div>
-        
-        <div class="upload-box" id="box-left">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-left" accept="image/*">
-            <label for="upload-left">Left</label>
-            <div id="preview-left"></div>
+
+        <div class="settings-panel">
+            <h3>⚙️ Settings</h3>
+            <div class="setting">
+                <label>Resolution:</label>
+                <select id="resolution">
+                    <option value="2048">2048x1024 (Standard)</option>
+                    <option value="4096" selected>4096x2048 (High Quality)</option>
+                    <option value="8192">8192x4096 (Ultra)</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label>Format:</label>
+                <select id="format">
+                    <option value="jpeg" selected>JPEG</option>
+                    <option value="png">PNG</option>
+                </select>
+            </div>
         </div>
-        
-        <div class="upload-box" id="box-right">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-right" accept="image/*">
-            <label for="upload-right">Right</label>
-            <div id="preview-right"></div>
+
+        <div class="controls">
+            <button id="btn-stitch" class="btn btn-primary" disabled>🔄 Stitch Images</button>
+            <button id="btn-download" class="btn btn-success" disabled>💾 Download</button>
+            <button id="btn-clear" class="btn btn-secondary">🗑️ Clear All</button>
         </div>
-        
-        <div class="upload-box" id="box-top">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-top" accept="image/*">
-            <label for="upload-top">Top</label>
-            <div id="preview-top"></div>
+
+        <div class="preview-section">
+            <h3>Preview</h3>
+            <div class="canvas-wrapper">
+                <canvas id="canvas"></canvas>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Stitching...</p>
+                </div>
+            </div>
         </div>
-        
-        <div class="upload-box" id="box-bottom">
-            <div class="icon">📷</div>
-            <input type="file" id="upload-bottom" accept="image/*">
-            <label for="upload-bottom">Bottom</label>
-            <div id="preview-bottom"></div>
-        </div>
+
+        <footer>
+            <p>Made for MMView • <a href="https://github.com/Mocodonia/MMStitch">GitHub</a></p>
+        </footer>
     </div>
 
-    <script>
-        // Visual feedback - change title if JS loads
-        document.title = "MMStitch - JS Working! ✅";
-        
-        const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-        let uploadedCount = 0;
-        
-        faces.forEach(face => {
-            const input = document.getElementById(`upload-${face}`);
-            
-            input.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                // Update status
-                uploadedCount++;
-                document.getElementById('status').textContent = 
-                    `${uploadedCount} image(s) uploaded! Keep going...`;
-                
-                // Mark box as uploaded
-                document.getElementById(`box-${face}`).classList.add('uploaded');
-                
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.className = 'preview-img';
-                    
-                    const preview = document.getElementById(`preview-${face}`);
-                    preview.innerHTML = '';
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-    </script>
+    <script src="js/stitcher.js"></script>
 </body>
 </html>
