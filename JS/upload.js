@@ -1,168 +1,116 @@
-// Update debug status
-document.getElementById('debug').textContent = 'Upload.js loaded ✓';
-document.getElementById('debug').style.background = 'rgba(16, 185, 129, 0.3)';
+// ===============================
+// MMStitch Upload Handler (Fixed)
+// ===============================
 
-// Global state for uploaded images
+// Debug indicator
+const debug = document.getElementById('debug');
+debug.textContent = 'Upload.js loaded ✓';
+debug.style.background = 'rgba(16, 185, 129, 0.3)';
+
+// Required faces for stitching
+const REQUIRED_FACES = ['front', 'back', 'left', 'right'];
+const OPTIONAL_FACES = ['top', 'bottom'];
+const ALL_FACES = [...REQUIRED_FACES, ...OPTIONAL_FACES];
+
+// Global state
 window.uploadedImages = {};
 window.uploadedCount = 0;
 
-// Face names
-const FACES = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-
-// Debug logger - shows messages on screen
-function debugLog(message) {
-    const debug = document.getElementById('debug');
-    debug.textContent = message;
-    console.log(message);
+// Debug logger
+function debugLog(msg) {
+    console.log(msg);
+    debug.textContent = msg;
 }
 
 // Setup upload handlers
 function setupUploads() {
     debugLog('Setting up upload handlers...');
-    
-    let handlersSetup = 0;
-    
-    FACES.forEach(face => {
+
+    ALL_FACES.forEach(face => {
         const input = document.getElementById(`input-${face}`);
         const box = document.getElementById(`box-${face}`);
         const thumb = document.getElementById(`thumb-${face}`);
-        
-        if (!input) {
-            debugLog(`ERROR: input-${face} not found!`);
-            return;
-        }
-        
-        if (!box) {
-            debugLog(`ERROR: box-${face} not found!`);
-            return;
-        }
-        
-        if (!thumb) {
-            debugLog(`ERROR: thumb-${face} not found!`);
-            return;
-        }
-        
-        // When file input changes
-        input.addEventListener('change', function(e) {
-            debugLog(`File selected for ${face}!`);
-            
+
+        if (!input || !box || !thumb) return;
+
+        // Clicking the box opens the file picker
+        box.addEventListener('click', () => input.click());
+
+        // When a file is selected
+        input.addEventListener('change', e => {
             const file = e.target.files[0];
-            
-            if (!file) {
-                debugLog(`No file selected for ${face}`);
-                return;
-            }
-            
-            debugLog(`File: ${file.name}, size: ${file.size}, type: ${file.type}`);
-            
+            if (!file) return;
+
             if (!file.type.startsWith('image/')) {
-                debugLog('ERROR: Not an image file!');
-                alert('Please select an image file');
+                alert('Please upload an image file');
                 return;
             }
-            
-            debugLog(`Reading ${face} image...`);
-            
-            // Read the file
+
             const reader = new FileReader();
-            
-            reader.onload = function(event) {
-                debugLog(`FileReader finished for ${face}`);
-                
-                // Create image object
+            reader.onload = event => {
                 const img = new Image();
-                
-                img.onload = function() {
-                    debugLog(`Image loaded for ${face}: ${img.width}x${img.height}`);
-                    
-                    // Store the image
+                img.onload = () => {
                     window.uploadedImages[face] = img;
-                    
-                    // Update count if this is a new upload
+
+                    // Count only if first time uploading this face
                     if (!box.classList.contains('has-image')) {
                         window.uploadedCount++;
-                        debugLog(`Upload count: ${window.uploadedCount}`);
                     }
-                    
+
                     // Show thumbnail
                     thumb.src = event.target.result;
+                    thumb.style.display = 'block';
                     box.classList.add('has-image');
-                    
-                    debugLog(`${face} uploaded successfully! Total: ${window.uploadedCount}/6`);
-                    
-                    // Update UI
+
                     updateUploadStatus();
                 };
-                
-                img.onerror = function() {
-                    debugLog(`ERROR: Failed to load image for ${face}`);
-                };
-                
                 img.src = event.target.result;
             };
-            
-            reader.onerror = function() {
-                debugLog(`ERROR: FileReader failed for ${face}`);
-            };
-            
+
             reader.readAsDataURL(file);
         });
-        
-        handlersSetup++;
     });
-    
-    debugLog(`${handlersSetup} upload handlers ready!`);
+
+    updateUploadStatus();
 }
 
-// Update the status bar
+// Update UI status
 function updateUploadStatus() {
     const status = document.getElementById('status');
     const progress = document.getElementById('progress');
     const stitchBtn = document.getElementById('btn-stitch');
-    
-    if (!status || !progress || !stitchBtn) {
-        debugLog('ERROR: Status elements not found!');
-        return;
-    }
-    
-    status.textContent = `${window.uploadedCount}/6 images uploaded`;
-    progress.style.width = (window.uploadedCount / 6 * 100) + '%';
-    
-    // Enable stitch button when all 6 images are uploaded
-    stitchBtn.disabled = window.uploadedCount < 6;
-    
-    debugLog(`UI updated: ${window.uploadedCount}/6 - Stitch button ${stitchBtn.disabled ? 'disabled' : 'enabled'}`);
+
+    const requiredUploaded = REQUIRED_FACES.filter(f => window.uploadedImages[f]).length;
+
+    status.textContent = `${requiredUploaded}/4 required images uploaded`;
+    progress.style.width = (requiredUploaded / 4 * 100) + '%';
+
+    stitchBtn.disabled = requiredUploaded < 4;
 }
 
 // Clear all uploads
 function clearUploads() {
-    debugLog('Clearing all uploads...');
-    
     window.uploadedImages = {};
     window.uploadedCount = 0;
-    
-    FACES.forEach(face => {
+
+    ALL_FACES.forEach(face => {
         const input = document.getElementById(`input-${face}`);
         const box = document.getElementById(`box-${face}`);
         const thumb = document.getElementById(`thumb-${face}`);
-        
+
         if (input) input.value = '';
         if (box) box.classList.remove('has-image');
-        if (thumb) thumb.src = '';
+        if (thumb) {
+            thumb.src = '';
+            thumb.style.display = 'none';
+        }
     });
-    
+
     updateUploadStatus();
-    debugLog('All uploads cleared');
 }
 
-// Initialize uploads when DOM is ready
-if (document.readyState === 'loading') {
-    debugLog('Waiting for DOM...');
-    document.addEventListener('DOMContentLoaded', setupUploads);
-} else {
-    debugLog('DOM already loaded');
-    setupUploads();
-}
-
-// Export clear function for use by other scripts
+// Expose clear function
 window.clearUploads = clearUploads;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', setupUploads);
