@@ -3,193 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMStitch</title>
+    <title>MMStitch – Minecraft Mode</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🌐 MMStitch</h1>
-            <p>Create 360° panoramic images</p>
-            <p class="debug" id="debug">Loading JavaScript...</p>
-        </header>
+<div class="container">
+    <header>
+        <h1>🌐 MMStitch – Minecraft</h1>
+        <p>Turn Minecraft screenshots into a 360° panorama</p>
+        <p class="debug" id="debug">Loading…</p>
+    </header>
 
-        <div class="status-bar">
-            <p class="upload-status" id="status">0/4 required images uploaded</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress"></div>
-            </div>
-        </div>
-
-        <div class="upload-grid">
-            <!-- Front -->
-            <div class="upload-box" id="box-front">
-                <input type="file" id="input-front" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Front</div>
-                </div>
-                <img class="thumb" id="thumb-front" style="display:none;">
-            </div>
-
-            <!-- Back -->
-            <div class="upload-box" id="box-back">
-                <input type="file" id="input-back" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Back</div>
-                </div>
-                <img class="thumb" id="thumb-back" style="display:none;">
-            </div>
-
-            <!-- Left -->
-            <div class="upload-box" id="box-left">
-                <input type="file" id="input-left" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Left</div>
-                </div>
-                <img class="thumb" id="thumb-left" style="display:none;">
-            </div>
-
-            <!-- Right -->
-            <div class="upload-box" id="box-right">
-                <input type="file" id="input-right" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Right</div>
-                </div>
-                <img class="thumb" id="thumb-right" style="display:none;">
-            </div>
-
-            <!-- Top (optional) -->
-            <div class="upload-box" id="box-top">
-                <input type="file" id="input-top" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Top (optional)</div>
-                </div>
-                <img class="thumb" id="thumb-top" style="display:none;">
-            </div>
-
-            <!-- Bottom (optional) -->
-            <div class="upload-box" id="box-bottom">
-                <input type="file" id="input-bottom" accept="image/*" style="display:none;">
-                <div class="content">
-                    <div class="icon">📷</div>
-                    <div class="name">Bottom (optional)</div>
-                </div>
-                <img class="thumb" id="thumb-bottom" style="display:none;">
-            </div>
-        </div>
-
-        <div class="settings">
-            <label>Resolution:</label>
-            <select id="resolution">
-                <option value="2048">2048x1024</option>
-                <option value="4096" selected>4096x2048</option>
-                <option value="8192">8192x4096</option>
-            </select>
-        </div>
-
-        <div class="controls">
-            <button id="btn-stitch" disabled>🔄 Stitch</button>
-            <button id="btn-download" disabled>💾 Download</button>
-            <button id="btn-clear">🗑️ Clear</button>
-        </div>
-
-        <div class="preview-area">
-            <h3>Preview</h3>
-            <canvas id="canvas"></canvas>
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Processing...</p>
-            </div>
+    <div class="status-bar">
+        <p class="upload-status" id="status">0 images uploaded</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
         </div>
     </div>
 
-    <!-- Inline upload logic to avoid any path issues -->
-    <script>
-    (function() {
-        const debug = document.getElementById('debug');
-        debug.textContent = 'Upload logic loaded ✓';
-        debug.style.background = 'rgba(16, 185, 129, 0.3)';
+    <div class="upload-grid" id="upload-grid">
+        <!-- 8 slots, you can add more if you want -->
+        <div class="upload-box" data-index="0">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">1</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="1">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">2</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="2">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">3</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="3">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">4</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="4">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">5</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="5">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">6</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="6">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">7</div>
+            </div>
+            <img class="thumb">
+        </div>
+        <div class="upload-box" data-index="7">
+            <input type="file" accept="image/*">
+            <div class="content">
+                <div class="icon">📷</div>
+                <div class="name">8</div>
+            </div>
+            <img class="thumb">
+        </div>
+    </div>
 
-        const REQUIRED_FACES = ['front', 'back', 'left', 'right'];
-        const OPTIONAL_FACES = ['top', 'bottom'];
-        const ALL_FACES = [...REQUIRED_FACES, ...OPTIONAL_FACES];
+    <div class="settings">
+        <label>Resolution:</label>
+        <select id="resolution">
+            <option value="2048">2048x1024</option>
+            <option value="4096" selected>4096x2048</option>
+        </select>
+    </div>
 
-        window.uploadedImages = {};
+    <div class="controls">
+        <button id="btn-stitch" disabled>🔄 Stitch</button>
+        <button id="btn-download" disabled>💾 Download</button>
+        <button id="btn-clear">🗑️ Clear</button>
+    </div>
 
-        function updateUploadStatus() {
-            const status = document.getElementById('status');
-            const progress = document.getElementById('progress');
-            const stitchBtn = document.getElementById('btn-stitch');
+    <div class="preview-area">
+        <h3>Preview</h3>
+        <canvas id="canvas"></canvas>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing…</p>
+        </div>
+    </div>
+</div>
 
-            const requiredUploaded = REQUIRED_FACES.filter(f => window.uploadedImages[f]).length;
-            status.textContent = requiredUploaded + '/4 required images uploaded';
-            progress.style.width = (requiredUploaded / 4 * 100) + '%';
-            stitchBtn.disabled = requiredUploaded < 4;
-        }
-
-        function setupUploads() {
-            ALL_FACES.forEach(face => {
-                const box = document.getElementById('box-' + face);
-                const input = document.getElementById('input-' + face);
-                const thumb = document.getElementById('thumb-' + face);
-                if (!box || !input || !thumb) return;
-
-                box.addEventListener('click', () => input.click());
-
-                input.addEventListener('change', e => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    if (!file.type.startsWith('image/')) {
-                        alert('Please upload an image file');
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = ev => {
-                        const img = new Image();
-                        img.onload = () => {
-                            window.uploadedImages[face] = img;
-                            thumb.src = ev.target.result;
-                            thumb.style.display = 'block';
-                            box.classList.add('has-image');
-                            updateUploadStatus();
-                        };
-                        img.src = ev.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                });
-            });
-
-            updateUploadStatus();
-        }
-
-        function clearUploads() {
-            window.uploadedImages = {};
-            ALL_FACES.forEach(face => {
-                const input = document.getElementById('input-' + face);
-                const box = document.getElementById('box-' + face);
-                const thumb = document.getElementById('thumb-' + face);
-                if (input) input.value = '';
-                if (box) box.classList.remove('has-image');
-                if (thumb) {
-                    thumb.src = '';
-                    thumb.style.display = 'none';
-                }
-            });
-            updateUploadStatus();
-        }
-
-        window.clearUploads = clearUploads;
-        document.addEventListener('DOMContentLoaded', setupUploads);
-    })();
-    </script>
-
-    <!-- Your existing stitcher logic -->
-    <script src="js/stitcher.js"></script>
+<script src="stitcher.js"></script>
 </body>
 </html>
