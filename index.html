@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMStitch - 360° Image Creator</title>
+    <title>MMStitch</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🌐 MMStitch</h1>
-            <p>Create 360° panoramic images for MMView</p>
+            <p>Create 360° panoramic images</p>
+            <p class="debug" id="debug">Loading JavaScript...</p>
         </header>
 
         <div class="status-bar">
-            <h2>Upload Images</h2>
-            <p class="upload-status" id="status">0/6 required images uploaded</p>
+            <p class="upload-status" id="status">0/6 images uploaded</p>
             <div class="progress-bar">
                 <div class="progress-fill" id="progress"></div>
             </div>
@@ -23,113 +23,94 @@
 
         <div class="upload-grid">
             <!-- Front -->
-            <div class="upload-slot" data-face="front">
-                <input type="file" id="file-front" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-front">
+                <input type="file" id="input-front" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Front</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Front</div>
                 </div>
-                <div class="preview" id="preview-front"></div>
+                <img class="thumb" id="thumb-front">
             </div>
 
             <!-- Back -->
-            <div class="upload-slot" data-face="back">
-                <input type="file" id="file-back" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-back">
+                <input type="file" id="input-back" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Back</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Back</div>
                 </div>
-                <div class="preview" id="preview-back"></div>
+                <img class="thumb" id="thumb-back">
             </div>
 
             <!-- Left -->
-            <div class="upload-slot" data-face="left">
-                <input type="file" id="file-left" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-left">
+                <input type="file" id="input-left" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Left</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Left</div>
                 </div>
-                <div class="preview" id="preview-left"></div>
+                <img class="thumb" id="thumb-left">
             </div>
 
             <!-- Right -->
-            <div class="upload-slot" data-face="right">
-                <input type="file" id="file-right" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-right">
+                <input type="file" id="input-right" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Right</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Right</div>
                 </div>
-                <div class="preview" id="preview-right"></div>
+                <img class="thumb" id="thumb-right">
             </div>
 
             <!-- Top -->
-            <div class="upload-slot" data-face="top">
-                <input type="file" id="file-top" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-top">
+                <input type="file" id="input-top" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Top</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Top</div>
                 </div>
-                <div class="preview" id="preview-top"></div>
+                <img class="thumb" id="thumb-top">
             </div>
 
             <!-- Bottom -->
-            <div class="upload-slot" data-face="bottom">
-                <input type="file" id="file-bottom" accept="image/*" style="display: none;">
-                <div class="upload-content">
+            <div class="upload-box" id="box-bottom">
+                <input type="file" id="input-bottom" accept="image/*">
+                <div class="content">
                     <div class="icon">📷</div>
-                    <div class="label">Bottom</div>
-                    <div class="hint">Click to upload</div>
+                    <div class="name">Bottom</div>
                 </div>
-                <div class="preview" id="preview-bottom"></div>
+                <img class="thumb" id="thumb-bottom">
             </div>
         </div>
 
-        <div class="settings-panel">
-            <h3>⚙️ Settings</h3>
-            <div class="setting">
-                <label>Resolution:</label>
-                <select id="resolution">
-                    <option value="2048">2048x1024 (Standard)</option>
-                    <option value="4096" selected>4096x2048 (High Quality)</option>
-                    <option value="8192">8192x4096 (Ultra)</option>
-                </select>
-            </div>
-            <div class="setting">
-                <label>Format:</label>
-                <select id="format">
-                    <option value="jpeg" selected>JPEG</option>
-                    <option value="png">PNG</option>
-                </select>
-            </div>
+        <div class="settings">
+            <label>Resolution:</label>
+            <select id="resolution">
+                <option value="2048">2048x1024</option>
+                <option value="4096" selected>4096x2048</option>
+                <option value="8192">8192x4096</option>
+            </select>
         </div>
 
         <div class="controls">
-            <button id="btn-stitch" class="btn btn-primary" disabled>🔄 Stitch Images</button>
-            <button id="btn-download" class="btn btn-success" disabled>💾 Download</button>
-            <button id="btn-clear" class="btn btn-secondary">🗑️ Clear All</button>
+            <button id="btn-stitch" disabled>🔄 Stitch</button>
+            <button id="btn-download" disabled>💾 Download</button>
+            <button id="btn-clear">🗑️ Clear</button>
         </div>
 
-        <div class="preview-section">
+        <div class="preview-area">
             <h3>Preview</h3>
-            <div class="canvas-wrapper">
-                <canvas id="canvas"></canvas>
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p>Stitching...</p>
-                </div>
+            <canvas id="canvas"></canvas>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing...</p>
             </div>
         </div>
-
-        <footer>
-            <p>Made for MMView • <a href="https://github.com/Mocodonia/MMStitch">GitHub</a></p>
-        </footer>
     </div>
 
+    <!-- Load upload handler FIRST -->
+    <script src="js/upload.js"></script>
+    <!-- Then load stitcher -->
     <script src="js/stitcher.js"></script>
 </body>
 </html>
