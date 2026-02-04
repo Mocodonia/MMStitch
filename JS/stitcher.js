@@ -110,11 +110,23 @@ function selectFace(x, y, z) {
     const ax = Math.abs(x);
     const ay = Math.abs(y);
     const az = Math.abs(z);
-    
+
+    // If top/bottom are missing, force horizontal faces
+    const hasTop = !!window.uploadedImages['top'];
+    const hasBottom = !!window.uploadedImages['bottom'];
+
+    if (!hasTop && !hasBottom) {
+        // Only choose between front/back/left/right
+        if (ax >= az) return x > 0 ? 'right' : 'left';
+        return z > 0 ? 'back' : 'front';
+    }
+
+    // Normal 6-face selection
     if (ax >= ay && ax >= az) return x > 0 ? 'right' : 'left';
     if (ay >= ax && ay >= az) return y > 0 ? 'top' : 'bottom';
     return z > 0 ? 'back' : 'front';
 }
+
 
 // Get UV coordinates for face
 function getFaceUV(x, y, z, face) {
@@ -150,15 +162,25 @@ function getFaceUV(x, y, z, face) {
 
 // Sample pixel from face
 function sampleFace(faceData, u, v) {
-    if (!faceData) return null;
-    
+    // If the face doesn't exist, return a fallback color (sky blue)
+    if (!faceData) {
+        return [135, 206, 235]; // sky color
+    }
+
     const { canvas, ctx } = faceData;
+
+    // Clamp UV
+    if (u < 0 || u > 1 || v < 0 || v > 1) {
+        return [0, 0, 0];
+    }
+
     const x = Math.floor(u * (canvas.width - 1));
     const y = Math.floor(v * (canvas.height - 1));
-    
+
     try {
         return ctx.getImageData(x, y, 1, 1).data;
     } catch (e) {
-        return null;
+        return [0, 0, 0];
     }
 }
+
