@@ -1,12 +1,9 @@
-<div class="upload-grid">
-
-    <script>
+<script>
 (function() {
     const debug = document.getElementById('debug');
     debug.textContent = 'Upload logic loaded ✓ (10‑slot Cam360 mode)';
     debug.style.background = 'rgba(16, 185, 129, 0.3)';
 
-    // Cam360 10‑image pattern
     const FACES = [
         'front', 'frontright', 'right', 'backright', 'back',
         'backleft', 'left', 'frontleft',
@@ -24,7 +21,7 @@
         status.textContent = uploaded + '/10 images uploaded';
         progress.style.width = (uploaded / 10 * 100) + '%';
 
-        stitchBtn.disabled = uploaded < 3; // allow partial ring
+        stitchBtn.disabled = uploaded < 3;
     }
 
     function setupUploads() {
@@ -39,6 +36,7 @@
             input.addEventListener('change', e => {
                 const file = e.target.files[0];
                 if (!file) return;
+
                 if (!file.type.startsWith('image/')) {
                     alert('Please upload an image file');
                     return;
@@ -69,6 +67,7 @@
             const input = document.getElementById('input-' + face);
             const box = document.getElementById('box-' + face);
             const thumb = document.getElementById('thumb-' + face);
+
             if (input) input.value = '';
             if (box) box.classList.remove('has-image');
             if (thumb) {
@@ -84,7 +83,9 @@
 })();
 </script>
 
-    
+<!-- NOW the upload grid goes here -->
+<div class="upload-grid">
+
     <!-- Row 1 -->
     <div class="upload-box" id="box-front">
         <input type="file" id="input-front" accept="image/*" style="display:none;">
