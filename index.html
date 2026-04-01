@@ -5,31 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MMStitch</title>
 
-  <!-- IMPORTANT: load CSS -->
-  <link rel="stylesheet" href="./style.css" />
+  <!-- GitHub Pages project site safe path -->
+  <link rel="stylesheet" href="/MMStitch/style.css" />
 </head>
 <body>
+  <div class="container">
+    <div id="debug"></div>
 
-  <!-- OPTIONAL: add this so your debug code has something to write to -->
-  <div id="debug" class="debug"></div>
+    <section class="upload-section">
+      <h2>Upload Images</h2>
+      <p class="hint">Click each tile to upload an image. Minimum 3 horizontal images required to stitch.</p>
 
-  <!-- Upload grid (your existing markup) -->
-  <div class="upload-grid">
-    <div class="upload-box" id="box-front">
-      <input type="file" id="input-front" accept="image/*" style="display:none;">
-      <div class="content"><div class="icon">📷</div><div class="name">Front</div></div>
-      <img class="thumb" id="thumb-front" style="display:none;">
+      <div class="progress-bar"><div id="progress"></div></div>
+      <div id="status" class="upload-status">0/10 images uploaded</div>
+
+      <div class="upload-grid">
+        <!-- Row 1 -->
+        <div class="upload-box" id="box-front">
+          <input type="file" id="input-front" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Front</div></div>
+          <img class="thumb" id="thumb-front" alt="Front preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-frontright">
+          <input type="file" id="input-frontright" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Front‑Right</div></div>
+          <img class="thumb" id="thumb-frontright" alt="Front-right preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-right">
+          <input type="file" id="input-right" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Right</div></div>
+          <img class="thumb" id="thumb-right" alt="Right preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-backright">
+          <input type="file" id="input-backright" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Back‑Right</div></div>
+          <img class="thumb" id="thumb-backright" alt="Back-right preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-back">
+          <input type="file" id="input-back" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Back</div></div>
+          <img class="thumb" id="thumb-back" alt="Back preview" style="display:none;">
+        </div>
+
+        <!-- Row 2 -->
+        <div class="upload-box" id="box-backleft">
+          <input type="file" id="input-backleft" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Back‑Left</div></div>
+          <img class="thumb" id="thumb-backleft" alt="Back-left preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-left">
+          <input type="file" id="input-left" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Left</div></div>
+          <img class="thumb" id="thumb-left" alt="Left preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-frontleft">
+          <input type="file" id="input-frontleft" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Front‑Left</div></div>
+          <img class="thumb" id="thumb-frontleft" alt="Front-left preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-top">
+          <input type="file" id="input-top" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Top</div></div>
+          <img class="thumb" id="thumb-top" alt="Top preview" style="display:none;">
+        </div>
+
+        <div class="upload-box" id="box-bottom">
+          <input type="file" id="input-bottom" accept="image/*" style="display:none;">
+          <div class="content"><div class="icon">📷</div><div class="name">Bottom</div></div>
+          <img class="thumb" id="thumb-bottom" alt="Bottom preview" style="display:none;">
+        </div>
+      </div>
+    </section>
+
+    <section class="settings">
+      <h3>Settings</h3>
+      <div class="setting-group">
+        <label for="resolution">Resolution</label>
+        <select id="resolution">
+          <option value="2048">2048 × 1024</option>
+          <option value="4096" selected>4096 × 2048</option>
+          <option value="8192">8192 × 4096</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button id="btn-stitch" class="btn btn-primary" disabled>Stitch</button>
+      <button id="btn-download" class="btn btn-success" disabled>Download</button>
+      <button id="btn-clear" class="btn btn-secondary" type="button">Clear</button>
     </div>
 
-    <!-- keep the rest of your boxes exactly as you have them ... -->
+    <section class="preview-section">
+      <h2>Preview</h2>
+      <div class="canvas-container">
+        <canvas id="canvas" width="4096" height="2048"></canvas>
+        <div id="loading" class="loading">
+          <div class="spinner"></div>
+          <p>Stitching…</p>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
-  (function() {
+  (function () {
     const FACES = [
-      'front', 'frontright', 'right', 'backright', 'back',
-      'backleft', 'left', 'frontleft',
-      'top', 'bottom'
+      'front','frontright','right','backright','back',
+      'backleft','left','frontleft','top','bottom'
     ];
 
     window.uploadedImages = {};
@@ -83,6 +172,25 @@
       updateUploadStatus();
     }
 
+    function clearUploads() {
+      window.uploadedImages = {};
+      FACES.forEach(face => {
+        const input = document.getElementById('input-' + face);
+        const box = document.getElementById('box-' + face);
+        const thumb = document.getElementById('thumb-' + face);
+
+        if (input) input.value = '';
+        if (box) box.classList.remove('has-image');
+        if (thumb) {
+          thumb.src = '';
+          thumb.style.display = 'none';
+        }
+      });
+      updateUploadStatus();
+    }
+
+    window.clearUploads = clearUploads;
+
     document.addEventListener('DOMContentLoaded', () => {
       const debug = document.getElementById('debug');
       if (debug) {
@@ -93,5 +201,6 @@
     });
   })();
   </script>
+
 </body>
 </html>
