@@ -1,151 +1,97 @@
-<script>
-(function() {
-    const debug = document.getElementById('debug');
-    debug.textContent = 'Upload logic loaded ✓ (10‑slot Cam360 mode)';
-    debug.style.background = 'rgba(16, 185, 129, 0.3)';
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MMStitch</title>
 
+  <!-- IMPORTANT: load CSS -->
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- OPTIONAL: add this so your debug code has something to write to -->
+  <div id="debug" class="debug"></div>
+
+  <!-- Upload grid (your existing markup) -->
+  <div class="upload-grid">
+    <div class="upload-box" id="box-front">
+      <input type="file" id="input-front" accept="image/*" style="display:none;">
+      <div class="content"><div class="icon">📷</div><div class="name">Front</div></div>
+      <img class="thumb" id="thumb-front" style="display:none;">
+    </div>
+
+    <!-- keep the rest of your boxes exactly as you have them ... -->
+  </div>
+
+  <script>
+  (function() {
     const FACES = [
-        'front', 'frontright', 'right', 'backright', 'back',
-        'backleft', 'left', 'frontleft',
-        'top', 'bottom'
+      'front', 'frontright', 'right', 'backright', 'back',
+      'backleft', 'left', 'frontleft',
+      'top', 'bottom'
     ];
 
     window.uploadedImages = {};
 
     function updateUploadStatus() {
-        const status = document.getElementById('status');
-        const progress = document.getElementById('progress');
-        const stitchBtn = document.getElementById('btn-stitch');
+      const status = document.getElementById('status');
+      const progress = document.getElementById('progress');
+      const stitchBtn = document.getElementById('btn-stitch');
 
-        const uploaded = FACES.filter(f => window.uploadedImages[f]).length;
-        status.textContent = uploaded + '/10 images uploaded';
-        progress.style.width = (uploaded / 10 * 100) + '%';
+      const uploaded = FACES.filter(f => window.uploadedImages[f]).length;
 
-        stitchBtn.disabled = uploaded < 3;
+      if (status) status.textContent = uploaded + '/10 images uploaded';
+      if (progress) progress.style.width = (uploaded / 10 * 100) + '%';
+      if (stitchBtn) stitchBtn.disabled = uploaded < 3;
     }
 
     function setupUploads() {
-        FACES.forEach(face => {
-            const box = document.getElementById('box-' + face);
-            const input = document.getElementById('input-' + face);
-            const thumb = document.getElementById('thumb-' + face);
-            if (!box || !input || !thumb) return;
+      FACES.forEach(face => {
+        const box = document.getElementById('box-' + face);
+        const input = document.getElementById('input-' + face);
+        const thumb = document.getElementById('thumb-' + face);
+        if (!box || !input || !thumb) return;
 
-            box.addEventListener('click', () => input.click());
+        box.addEventListener('click', () => input.click());
 
-            input.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) return;
+        input.addEventListener('change', e => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
 
-                if (!file.type.startsWith('image/')) {
-                    alert('Please upload an image file');
-                    return;
-                }
+          if (!file.type.startsWith('image/')) {
+            alert('Please upload an image file');
+            return;
+          }
 
-                const reader = new FileReader();
-                reader.onload = ev => {
-                    const img = new Image();
-                    img.onload = () => {
-                        window.uploadedImages[face] = img;
-                        thumb.src = ev.target.result;
-                        thumb.style.display = 'block';
-                        box.classList.add('has-image');
-                        updateUploadStatus();
-                    };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
+          const reader = new FileReader();
+          reader.onload = ev => {
+            const img = new Image();
+            img.onload = () => {
+              window.uploadedImages[face] = img;
+              thumb.src = ev.target.result;
+              thumb.style.display = 'block';
+              box.classList.add('has-image');
+              updateUploadStatus();
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
         });
+      });
 
-        updateUploadStatus();
+      updateUploadStatus();
     }
 
-    function clearUploads() {
-        window.uploadedImages = {};
-        FACES.forEach(face => {
-            const input = document.getElementById('input-' + face);
-            const box = document.getElementById('box-' + face);
-            const thumb = document.getElementById('thumb-' + face);
-
-            if (input) input.value = '';
-            if (box) box.classList.remove('has-image');
-            if (thumb) {
-                thumb.src = '';
-                thumb.style.display = 'none';
-            }
-        });
-        updateUploadStatus();
-    }
-
-    window.clearUploads = clearUploads;
-    document.addEventListener('DOMContentLoaded', setupUploads);
-})();
-</script>
-
-<!-- NOW the upload grid goes here -->
-<div class="upload-grid">
-
-    <!-- Row 1 -->
-    <div class="upload-box" id="box-front">
-        <input type="file" id="input-front" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Front</div></div>
-        <img class="thumb" id="thumb-front" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-frontright">
-        <input type="file" id="input-frontright" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Front‑Right</div></div>
-        <img class="thumb" id="thumb-frontright" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-right">
-        <input type="file" id="input-right" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Right</div></div>
-        <img class="thumb" id="thumb-right" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-backright">
-        <input type="file" id="input-backright" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Back‑Right</div></div>
-        <img class="thumb" id="thumb-backright" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-back">
-        <input type="file" id="input-back" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Back</div></div>
-        <img class="thumb" id="thumb-back" style="display:none;">
-    </div>
-
-    <!-- Row 2 -->
-    <div class="upload-box" id="box-backleft">
-        <input type="file" id="input-backleft" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Back‑Left</div></div>
-        <img class="thumb" id="thumb-backleft" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-left">
-        <input type="file" id="input-left" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Left</div></div>
-        <img class="thumb" id="thumb-left" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-frontleft">
-        <input type="file" id="input-frontleft" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Front‑Left</div></div>
-        <img class="thumb" id="thumb-frontleft" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-top">
-        <input type="file" id="input-top" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Top</div></div>
-        <img class="thumb" id="thumb-top" style="display:none;">
-    </div>
-
-    <div class="upload-box" id="box-bottom">
-        <input type="file" id="input-bottom" accept="image/*" style="display:none;">
-        <div class="content"><div class="icon">📷</div><div class="name">Bottom</div></div>
-        <img class="thumb" id="thumb-bottom" style="display:none;">
-    </div>
-
-</div>
+    document.addEventListener('DOMContentLoaded', () => {
+      const debug = document.getElementById('debug');
+      if (debug) {
+        debug.textContent = 'Upload logic loaded ✓ (10-slot Cam360 mode)';
+        debug.style.background = 'rgba(16, 185, 129, 0.3)';
+      }
+      setupUploads();
+    });
+  })();
+  </script>
+</body>
+</html>
